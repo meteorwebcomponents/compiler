@@ -5,6 +5,8 @@ Plugin.registerCompiler({
     extensions: ["mwc.json"],
     filenames: []
 }, function() {
+    // build & deploy
+
     var compiler = new MWC_Compiler();
 
     return compiler;
@@ -38,6 +40,8 @@ MWC_Compiler.prototype.processFilesForTarget = function(files) {
             if (config.hasOwnProperty("append")) {
                 config.append.forEach(function(item) {
                     var itemPath = path.resolve('./public/' + item.publicFilePath);
+
+                    // vulcanize
 
                     if (fs.existsSync(itemPath)) {
                         var data = fs.readFileSync(itemPath).toString("utf-8");

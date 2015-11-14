@@ -6,7 +6,7 @@ config.mwc.json
         "publicFilePath": "index.html",
         "vulcanize": true
     }],
-    "delete": {
+    "remove": {
         "publicFilePath": ["bower.json", "index.html"],
         "publicFolderPath": ["bower_components", "linto"]
     }
