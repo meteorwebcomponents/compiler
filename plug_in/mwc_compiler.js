@@ -1,90 +1,8 @@
 var fs = Npm.require("fs");
 var future = Npm.require('fibers/future');
+var mkdirp = Npm.require("mkdirp");
 var path = Npm.require("path");
 var vulcanize = Npm.require("vulcanize");
-
-Plugin.registerCompiler({
-    extensions: ["mwc.json"],
-    filenames: []
-}, function() {
-    // build & deploy
-
-    var compiler = new MWC_Compiler();
-
-    return compiler;
-});
-
-function MWC_Compiler() {
-    // this._cacheByPackage = {};
-}
-
-MWC_Compiler.prototype.processFilesForTarget = function(files) {
-    if (-1 < ["web.browser", "web.cordova"].indexOf(files[0].getArch()) && files[0].getBasename() == "config.mwc.json") {
-        var mwcImportPath = path.resolve("./public/mwc.import.html");
-
-        if (fs.existsSync(mwcImportPath)) {
-            fs.unlinkSync(mwcImportPath);
-        }
-
-        files.forEach(function(file) {
-            try {
-                var config = JSON.parse(file.getContentsAsString());
-            } catch (error) {
-                file.error({
-                    message: "failed to parse, " + error.message
-                });
-
-                return;
-            }
-
-            if (config.hasOwnProperty("append")) {
-                config.append.forEach(function(item) {
-                    var itemPath = path.resolve("./public/" + item.publicFilePath);
-
-                    if (fs.existsSync(itemPath)) {
-                        if (item.vulcanize) {
-                            vulcanizer(path.resolve("./public"), item.publicFilePath, file);
-                        } else {
-                            append(file, fs.readFileSync(itemPath).toString("utf-8"));
-                        }
-                    }
-                });
-            }
-
-            if (config.hasOwnProperty("import")) {
-                if (config.import.publicFilePath.length) {
-                    var data = "";
-
-                    config.import.publicFilePath.forEach(function(item) {
-                        var itemPath = path.resolve("./public/" + item);
-
-                        if (fs.existsSync(itemPath)) {
-                            data += '<link href="' + item + '" rel="import">';
-                        }
-                    });
-
-                    if (data != "") {
-                        if (config.import.vulcanize) {
-                            fs.writeFileSync(mwcImportPath, "<head>" + data + "</head>");
-
-                            vulcanizer(path.resolve("./public"), "mwc.import.html", mwcImportPath);
-
-                            file.addHtml({
-                                data: '<link href="/mwc.import.html" rel="import">',
-                                section: "head"
-                            });
-                        } else {
-                            file.addHtml({
-                                data: data,
-                                section: "head"
-                            });
-                        }
-                    }
-                }
-            }
-        });
-    }
-};
 
 function append(file, html) {
     var body = html.match(/<body[^>]*>((.|[\n\r])*)<\/body>/im),
@@ -104,6 +22,82 @@ function append(file, html) {
         });
     }
 }
+
+function MWC_Compiler() {}
+
+MWC_Compiler.prototype.processFilesForTarget = function(files) {
+    if (-1 < ["web.browser", "web.cordova"].indexOf(files[0].getArch()) && files[0].getBasename() == "config.mwc.json") {
+        files.forEach(function(file) {
+            try {
+                var config = JSON.parse(file.getContentsAsString());
+            } catch (error) {
+                file.error({
+                    message: "failed to parse, " + error.message
+                });
+
+                return;
+            }
+
+            if (config.hasOwnProperty("root")) {
+                var mwcRootPath = path.resolve(config.root);
+
+                if (fs.existsSync(mwcRootPath)) {
+                    if (config.hasOwnProperty("append")) {
+                        config.append.forEach(function(item) {
+                            var itemPath = path.resolve(mwcRootPath, item);
+
+                            if (fs.existsSync(itemPath)) {
+                                vulcanizer(mwcRootPath, item, file);
+                            }
+                        });
+                    }
+
+                    if (config.hasOwnProperty("import")) {
+                        var data = "";
+
+                        config.import.forEach(function(item) {
+                            var itemPath = path.resolve(mwcRootPath, item);
+
+                            if (fs.existsSync(itemPath)) {
+                                data += '<link href="' + item + '" rel="import">';
+                            }
+                        });
+
+                        if (data != "") {
+                            var mwcImportFile = ".mwc.import.html",
+                                publicFolder = path.resolve("./public");
+
+                            if (!fs.existsSync(publicFolder)) {
+                                mkdirp.sync(publicFolder);
+                            }
+
+                            var mwcImportPath = path.resolve(mwcRootPath, mwcImportFile),
+                                mwcImportPathPublic = path.resolve(publicFolder, mwcImportFile);
+
+                            fs.writeFileSync(mwcImportPath, "<head>" + data + "</head>");
+
+                            vulcanizer(mwcRootPath, mwcImportFile, mwcImportPathPublic);
+
+                            file.addHtml({
+                                data: '<link href="/' + mwcImportFile + '" rel="import">',
+                                section: "head"
+                            });
+                        }
+                    }
+                } else {
+                    file.error({
+                        message: "can't find root, " + mwcRootPath
+                    });
+                }
+            } else {
+                file.error({
+                    message: "root property required"
+                });
+            }
+
+        });
+    }
+};
 
 function vulcanizer(root, target, destination) {
     var wait = new future();
@@ -138,3 +132,12 @@ function vulcanizer(root, target, destination) {
 
     return wait.wait();
 }
+
+Plugin.registerCompiler({
+    extensions: ["mwc.json"],
+    filenames: []
+}, function() {
+    var compiler = new MWC_Compiler();
+
+    return compiler;
+});

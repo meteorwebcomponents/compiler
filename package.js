@@ -3,7 +3,7 @@ Package.describe({
     git: "https://github.com/meteorwebcomponents/compiler.git",
     name: "mwc:compiler",
     summary: "mwc compiler",
-    version: "0.0.3"
+    version: "0.0.4"
 });
 
 Package.onUse(function(api) {
@@ -13,6 +13,7 @@ Package.onUse(function(api) {
 Package.registerBuildPlugin({
     name: "mwc_compiler",
     npmDependencies: {
+        "mkdirp": "0.5.0",
         "vulcanize": "1.14.0"
     },
     sources: [
