@@ -1,8 +1,9 @@
 Package.describe({
+    documentation: "README.md",
     git: "https://github.com/meteorwebcomponents/compiler.git",
     name: "mwc:compiler",
     summary: "mwc compiler",
-    version: "0.0.1"
+    version: "0.0.2"
 });
 
 Package.onUse(function(api) {
