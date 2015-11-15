@@ -2,14 +2,12 @@ config.mwc.json
 
 ```
 {
-    "append": [
+    "append": [ // append to head => head & body => body
         "index.html"
     ],
-    "import": [
+    "import": [ // vulcanize & import mwc.import.html ./public
         "bower_components/polymer/polymer.html",
     ],
-    "root": "../../Polymer/TorrentAlert"
+    "root": "../../Polymer/TorrentAlert" // any edit will in here auto build app
 }
 ```
-
-For [DOC](https://github.com/meteorwebcomponents/compiler)
