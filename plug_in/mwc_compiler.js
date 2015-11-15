@@ -1,8 +1,11 @@
+var chokidar = Npm.require("chokidar");
 var fs = Npm.require("fs");
 var future = Npm.require('fibers/future');
 var mkdirp = Npm.require("mkdirp");
 var path = Npm.require("path");
 var vulcanize = Npm.require("vulcanize");
+
+var watcher = null;
 
 function append(file, html) {
     var body = html.match(/<body[^>]*>((.|[\n\r])*)<\/body>/im),
@@ -26,8 +29,11 @@ function append(file, html) {
 function MWC_Compiler() {}
 
 MWC_Compiler.prototype.processFilesForTarget = function(files) {
-    if (-1 < ["web.browser", "web.cordova"].indexOf(files[0].getArch()) && files[0].getBasename() == "config.mwc.json") {
-        files.forEach(function(file) {
+    var watcher_editable_file = "",
+        watcher_opt = [];
+
+    files.forEach(function(file) {
+        if (file.getBasename() == "config.mwc.json") {
             try {
                 var config = JSON.parse(file.getContentsAsString());
             } catch (error) {
@@ -42,46 +48,56 @@ MWC_Compiler.prototype.processFilesForTarget = function(files) {
                 var mwcRootPath = path.resolve(config.root);
 
                 if (fs.existsSync(mwcRootPath)) {
-                    if (config.hasOwnProperty("append")) {
-                        config.append.forEach(function(item) {
-                            var itemPath = path.resolve(mwcRootPath, item);
-
-                            if (fs.existsSync(itemPath)) {
-                                vulcanizer(mwcRootPath, item, file);
-                            }
-                        });
+                    if (watcher_editable_file == "") {
+                        watcher_editable_file = path.resolve(file.getPathInPackage());
                     }
 
-                    if (config.hasOwnProperty("import")) {
-                        var data = "";
+                    if (watcher_opt.indexOf(mwcRootPath) == -1) {
+                        watcher_opt.push(mwcRootPath);
+                    }
 
-                        config.import.forEach(function(item) {
-                            var itemPath = path.resolve(mwcRootPath, item);
+                    if (-1 < ["web.browser", "web.cordova"].indexOf(file.getArch())) {
+                        if (config.hasOwnProperty("append")) {
+                            config.append.forEach(function(item) {
+                                var itemPath = path.resolve(mwcRootPath, item);
 
-                            if (fs.existsSync(itemPath)) {
-                                data += '<link href="' + item + '" rel="import">';
-                            }
-                        });
-
-                        if (data != "") {
-                            var mwcImportFile = ".mwc.import.html",
-                                publicFolder = path.resolve("./public");
-
-                            if (!fs.existsSync(publicFolder)) {
-                                mkdirp.sync(publicFolder);
-                            }
-
-                            var mwcImportPath = path.resolve(mwcRootPath, mwcImportFile),
-                                mwcImportPathPublic = path.resolve(publicFolder, mwcImportFile);
-
-                            fs.writeFileSync(mwcImportPath, "<head>" + data + "</head>");
-
-                            vulcanizer(mwcRootPath, mwcImportFile, mwcImportPathPublic);
-
-                            file.addHtml({
-                                data: '<link href="/' + mwcImportFile + '" rel="import">',
-                                section: "head"
+                                if (fs.existsSync(itemPath)) {
+                                    vulcanizer(mwcRootPath, item, file);
+                                }
                             });
+                        }
+
+                        if (config.hasOwnProperty("import")) {
+                            var data = "";
+
+                            config.import.forEach(function(item) {
+                                var itemPath = path.resolve(mwcRootPath, item);
+
+                                if (fs.existsSync(itemPath)) {
+                                    data += '<link href="' + item + '" rel="import">';
+                                }
+                            });
+
+                            if (data != "") {
+                                var mwcImportFile = ".mwc.import.html",
+                                    publicFolder = path.resolve("./public");
+
+                                if (!fs.existsSync(publicFolder)) {
+                                    mkdirp.sync(publicFolder);
+                                }
+
+                                var mwcImportPath = path.resolve(mwcRootPath, mwcImportFile),
+                                    mwcImportPathPublic = path.resolve(publicFolder, mwcImportFile);
+
+                                fs.writeFileSync(mwcImportPath, "<head>" + data + "</head>");
+
+                                vulcanizer(mwcRootPath, mwcImportFile, mwcImportPathPublic);
+
+                                file.addHtml({
+                                    data: '<link href="/' + mwcImportFile + '" rel="import">',
+                                    section: "head"
+                                });
+                            }
                         }
                     }
                 } else {
@@ -94,7 +110,21 @@ MWC_Compiler.prototype.processFilesForTarget = function(files) {
                     message: "root property required"
                 });
             }
+        }
+    });
 
+    if (watcher) {
+        watcher.close();
+    }
+
+    if (watcher_opt.length) {
+        watcher = chokidar.watch(watcher_opt, {
+            ignored: /[\/\\]\./,
+            ignoreInitial: true
+        });
+
+        watcher.on("all", function(event, path) {
+            fs.appendFileSync(watcher_editable_file, " ");
         });
     }
 };
