@@ -3,11 +3,13 @@ Package.describe({
     git: "https://github.com/meteorwebcomponents/compiler.git",
     name: "mwc:compiler",
     summary: "mwc compiler",
-    version: "0.0.5"
+    version: "1.0.0"
 });
 
 Package.onUse(function(api) {
     api.use("isobuild:compiler-plugin@1.0.0");
+
+    api.versionsFrom("1.0");
 });
 
 Package.registerBuildPlugin({
@@ -18,6 +20,6 @@ Package.registerBuildPlugin({
         "vulcanize": "1.14.0"
     },
     sources: [
-        "plug_in/mwc_compiler.js"
+        "plugin/mwc_compiler.js"
     ]
 });
