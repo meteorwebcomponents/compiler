@@ -1,9 +1,8 @@
-var chokidar = Npm.require("chokidar");
-var fs = Npm.require("fs");
-var future = Npm.require('fibers/future');
-var mkdirp = Npm.require("mkdirp");
-var path = Npm.require("path");
-var vulcanize = Npm.require("vulcanize");
+var chokidar = Npm.require("chokidar"),
+    fs = Npm.require("fs"),
+    mkdirp = Npm.require("mkdirp"),
+    path = Npm.require("path"),
+    vulcanize = Npm.require("vulcanize");
 
 var watcher = null;
 
@@ -26,23 +25,16 @@ function append(file, html) {
     }
 }
 
-function MWC_Compiler() {
-    this.watcher_opt = [];
-}
+function MWC_Compiler() {}
 
 MWC_Compiler.prototype.processFilesForTarget = function(files) {
-    var mwcFile = "mwc_compiler.vulcanize.html",
-        publicFolder = path.resolve("./public");
-
-    if (!fs.existsSync(publicFolder)) {
-        mkdirp.sync(publicFolder);
-    }
-
-    var watcher_editable = null,
-        watcher_opt_length = this.watcher_opt.length;
+    var mwcFile = "mwc_compiler.html",
+        publicFolder = path.resolve("./public"),
+        restartOnEdit = [],
+        watcherFolder = null;
 
     for (var A = 0; A < files.length; A++) {
-        if (-1 < ["web.browser", "web.cordova"].indexOf(files[A].getArch()) && files[A].getBasename() == "compiler.mwc.json") {
+        if (-1 < ["web.browser" /*, "web.cordova"*/ ].indexOf(files[A].getArch()) && files[A].getBasename() == "compiler.mwc.json") {
             var file = files[A];
 
             try {
@@ -59,12 +51,8 @@ MWC_Compiler.prototype.processFilesForTarget = function(files) {
                 var mwcRootPath = path.resolve(compiler.root);
 
                 if (fs.existsSync(mwcRootPath)) {
-                    if (!watcher_editable) {
-                        watcher_editable = path.resolve(file.getPathInPackage());
-                    }
-
-                    if (this.watcher_opt.indexOf(mwcRootPath) == -1) {
-                        this.watcher_opt.push(mwcRootPath);
+                    if (!watcherFolder) {
+                        watcherFolder = mwcRootPath;
                     }
 
                     if (compiler.hasOwnProperty("append")) {
@@ -73,6 +61,10 @@ MWC_Compiler.prototype.processFilesForTarget = function(files) {
 
                             if (fs.existsSync(itemPath)) {
                                 vulcanizer(mwcRootPath, item, file);
+
+                                if (restartOnEdit.indexOf(itemPath) == -1) {
+                                    restartOnEdit.push(itemPath);
+                                }
                             } else {
                                 file.error({
                                     message: "@append " + itemPath + " notFound"
@@ -98,12 +90,18 @@ MWC_Compiler.prototype.processFilesForTarget = function(files) {
                         });
 
                         if (data != "") {
+                            if (!fs.existsSync(publicFolder)) {
+                                mkdirp.sync(publicFolder);
+                            }
+
                             var mwcPath = path.resolve(mwcRootPath, mwcFile),
                                 mwcPathPublic = path.resolve(publicFolder, mwcFile);
 
                             fs.writeFileSync(mwcPath, "<head>" + data + "</head>");
 
-                            vulcanizer(mwcRootPath, mwcFile, mwcPathPublic);
+                            if (!fs.existsSync(mwcPathPublic) || fs.readFileSync(mwcPathPublic).toString("utf-8") == "") {
+                                vulcanizer(mwcRootPath, mwcFile, mwcPathPublic);
+                            }
 
                             file.addHtml({
                                 data: '<link href="/' + mwcFile + '" rel="import">',
@@ -124,26 +122,41 @@ MWC_Compiler.prototype.processFilesForTarget = function(files) {
         }
     }
 
-    if (this.watcher_opt.length != watcher_opt_length) {
-        if (watcher) {
-            watcher.close();
-        }
+    if (watcher) {
+        watcher.close();
+    }
 
-        watcher = chokidar.watch(this.watcher_opt, {
+    if (watcherFolder) {
+        watcher = chokidar.watch(watcherFolder, {
             // ignored: /[\/\\]\./,
             ignoreInitial: true
         });
 
         watcher.on("all", function(event, A) {
             if (mwcFile != path.basename(A)) {
-                fs.appendFileSync(watcher_editable, " ");
+                if (!fs.existsSync(publicFolder)) {
+                    mkdirp.sync(publicFolder);
+                }
+
+                var mwcPath = path.resolve(watcherFolder, mwcFile),
+                    mwcPathPublic = path.resolve(publicFolder, mwcFile);
+
+                if (-1 < restartOnEdit.indexOf(A)) {
+                    fs.writeFileSync(mwcPathPublic, "");
+                } else {
+                    if (fs.existsSync(mwcPath)) {
+                        vulcanizer(watcherFolder, mwcFile, mwcPathPublic);
+                    } else {
+                        fs.writeFileSync(mwcPathPublic, "");
+                    }
+                }
             }
         });
     }
 };
 
 function vulcanizer(root, target, destination) {
-    var wait = new future();
+    // var wait = new future();
 
     vulcanize.setOptions({
         abspath: root,
@@ -170,10 +183,10 @@ function vulcanizer(root, target, destination) {
             }
         }
 
-        wait.return(true);
+        // wait.return(true);
     });
 
-    return wait.wait();
+    // return wait.wait();
 }
 
 Plugin.registerCompiler({
