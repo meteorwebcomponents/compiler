@@ -3,7 +3,7 @@ Package.describe({
     git: "https://github.com/meteorwebcomponents/compiler.git",
     name: "mwc:compiler",
     summary: "mwc compiler",
-    version: "1.1.5"
+    version: "1.1.7"
 });
 
 Package.onUse(function(api) {
