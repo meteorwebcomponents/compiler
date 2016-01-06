@@ -68,6 +68,6 @@ Keep all `bower_components`, `custom polymer elements`, etc in the `root` (here 
 
 ## Demo
 
-
-Advanced Example - https://github.com/HedCET/TorrentAlert
+* Ebooks [link](https://github.com/sujith3g/ebook)
+* Advanced Example - [TorrentAlert](https://github.com/HedCET/TorrentAlert)
 
