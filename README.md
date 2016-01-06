@@ -6,6 +6,19 @@
 Automates Polymer vulcanizing in Meteor
 
 
+## Why ?
+
+
+Actually its difficult to code Polymer with Meteor, Meteor not support extra '<template>' tag inside client folder, You can solve it by 2 ways
+
+
+* Keep all `bower_components`, `custom polymer elements`, etc in public folder & manually vulcanize, delete `bower_components` after vulcanizing
+* Keep html inside javascript (like .jsx in react)
+
+
+mwc:compiler will automatically watch Polymer project folder anywhere in local file system & added to meteor after vulcanizing
+
+
 ## How to use it ?
 
 
@@ -50,7 +63,7 @@ Here is a sample `mwc.compiler.json`:
 ```
 
 
-Keep `bower.json`, `bower_components`, `custom polymer elements`, etc in the `root` (here it will be `.polymer`) vulcanizer root directory.
+Keep all `bower_components`, `custom polymer elements`, etc in the `root` (here it will be `.polymer`) vulcanizer root directory.
 
 
 ## Demo
