@@ -1,21 +1,27 @@
 # Compiler
 
-## What is mwc(meteor-webcomponents) compiler ?
+## What is mwc (meteor-webcomponents) compiler ?
 
-Meteor polymer compiler.
+
+Automates Polymer vulcanizing in Meteor
+
 
 ## How to use it ?
 
+
 Install `mwc:compiler` package to your Meteor App 
+
+
 ```sh
     $ meteor add mwc:compiler
 ```
 
-Keep the `mwc.compiler.json` configuration file with the following properties under `/client` folder of your Meteor App.
+Keep the `mwc.compiler.json` named configuration file with the following properties under `/client` folder of your Meteor App.
 
-* `root` : Root directory from which `html`,`js`,`css` files to be compiled and vulcanised.
-* `append` : Files specified here will be vulcanised and appended to `index.html`.
-* `import` : Array of files to be imported and vulcanised to `public/mwc_compiler.html`.
+
+* `root`[String] : Root directory from which `html`,`js`,`css`,etc files to be compiled and vulcanised.
+* `append` [Array] : Files specified here will be appended to `web.bowser`, 'web.cordova' builds after vulcanizing.
+* `import` [Array] : Files to be vulcanised to `public/mwc_compiler.html` & imported to `<head>`.
 
 
 Here is a sample `mwc.compiler.json`:
@@ -23,28 +29,32 @@ Here is a sample `mwc.compiler.json`:
 ```json
 {
     "root" : ".polymer",
+
     "append": [
         "index.html",
-        "polymer_color.html"
+        "my_class.html"
     ],
+
     "import": [
         "bower_components/font-roboto/roboto.html",
 
-        "bower_components/gold-email-input/gold-email-input.html",
+        "bower_components/paper-header-panel/paper-header-panel.html",
+        "bower_components/paper-scroll-header-panel/paper-scroll-header-panel.html",
 
-        "bower_components/iron-flex-layout/classes/iron-flex-layout.html",
-        "bower_components/iron-icons/iron-icons.html",
-        "bower_components/iron-icons/social-icons.html",
-        "bower_components/iron-localstorage/iron-localstorage.html",
-        "custom_elements/my-element.html"
-    ]
-     
+        "bower_components/polymer/polymer.html",
+
+        "linto/card-route.html"
+    ]     
 }
 
 ```
 
-Keep `bower.json` and polymer elements in the `root`(here it will be `.polymer`) directory.  
+
+Keep `bower.json`, `bower_components`, `custom polymer elements`, etc in the `root` (here it will be `.polymer`) vulcanizer root directory.
+
 
 ## Demo
 
+
 Advanced Example - https://github.com/HedCET/TorrentAlert
+
