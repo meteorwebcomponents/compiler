@@ -6,9 +6,14 @@ Meteor polymer compiler.
 
 ## How to use it ?
 
-Keep the `mwc.compiler.json` configuration file with the following properties under client folder of your Meteor App.
+Install `mwc:compiler` package to your Meteor App 
+```sh
+    $ meteor add mwc:compiler
+```
 
-* `root` : Root directory from which `html`,`js`,`css` files are compiled and vulcanised to the `index.html`.
+Keep the `mwc.compiler.json` configuration file with the following properties under `/client` folder of your Meteor App.
+
+* `root` : Root directory from which `html`,`js`,`css` files to be compiled and vulcanised.
 * `append` : Files specified here will be vulcanised and appended to `index.html`.
 * `import` : Array of files to be imported and vulcanised to `public/mwc_compiler.html`.
 
@@ -37,6 +42,8 @@ Here is a sample `mwc.compiler.json`:
 }
 
 ```
+
+Keep `bower.json` and polymer elements in the `root`(here it will be `.polymer`) directory.  
 
 ## Demo
 
