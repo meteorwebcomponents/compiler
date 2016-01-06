@@ -12,7 +12,7 @@ Automates Polymer vulcanizing in Meteor
 Actually its difficult to code Polymer with Meteor, Meteor not support extra `<template>` tag, You can solve it by 2 ways
 
 
-* Keep all `bower_components`, `custom polymer elements`, etc in public folder & manually vulcanize, delete `bower_components` after vulcanizing
+* Keep all `bower_components`, `custom polymer elements`, etc in public folder, Manually vulcanize, Delete `bower_components` after vulcanizing (bower_compuments increases app size)
 * Keep html inside javascript (like .jsx in react)
 
 
