@@ -16,7 +16,7 @@ Actually its difficult to code Polymer with Meteor, Meteor not support extra `<t
 * Keep html inside javascript (like .jsx in react)
 
 
-mwc:compiler will automatically watch Polymer project folder anywhere in local file system & added to meteor after vulcanizing
+mwc:compiler automatically watch Polymer project folder anywhere in local file system & added to meteor after vulcanizing
 
 
 ## How to use it ?
@@ -68,6 +68,5 @@ Keep all `bower_components`, `custom polymer elements`, etc in the `root` (here 
 
 ## Demo
 
-* Ebooks [link](https://github.com/sujith3g/ebook)
-* Advanced Example - [TorrentAlert](https://github.com/HedCET/TorrentAlert)
+* Advanced Example - [Free Ebooks](https://github.com/sujith3g/ebook), [TorrentAlert](https://github.com/HedCET/TorrentAlert)
 
