@@ -32,8 +32,8 @@ Install `mwc:compiler` package to your Meteor App
 Keep the `mwc.compiler.json` named configuration file with the following properties under `/client` folder of your Meteor App.
 
 
-* `root`[String] : Root directory from which `html`,`js`,`css`,etc files to be compiled and vulcanised.
-* `append` [Array] : Files specified here will be appended to `web.bowser`, 'web.cordova' builds after vulcanizing.
+* `root`[String] : Root directory from which `html`,`js`,`css`,etc files to be compiled and vulcanized.
+* `append` [Array] : Files specified here will be appended to `web.bowser`, `web.cordova` builds after vulcanizing.
 * `import` [Array] : Files to be vulcanised to `public/mwc_compiler.html` & imported to `<head>`.
 
 
