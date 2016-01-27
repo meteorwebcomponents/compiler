@@ -1,3 +1,7 @@
+<!--
+  Title: Meteor Webcomponents Compiler
+  Description: Compiler for polymer/webcomponents in meteor.
+  -->
 # Compiler
 
 ## What is mwc (meteor-webcomponents) compiler ?
