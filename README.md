@@ -69,5 +69,5 @@ Keep all `bower_components`, `custom polymer elements`, etc in the `root` (here 
 ## Demo
 
 * Basic Example with flowrouter - [mwc-flowrouter](https://github.com/meteorwebcomponents/demo-flowrouter)
-* Advanced Example - [Free Ebooks](https://github.com/sujith3g/ebook), [TorrentAlert](https://github.com/HedCET/TorrentAlert)
+* Apps Using `mwc:compiler` - [Free Ebooks](https://github.com/sujith3g/ebook), [TorrentAlert](https://github.com/HedCET/TorrentAlert)
 
