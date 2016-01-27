@@ -69,6 +69,12 @@ Here is a sample `mwc.compiler.json`:
 
 Keep all `bower_components`, `custom polymer elements`, etc in the `root` (here it will be `.polymer`) vulcanizer root directory.
 
+##Related Projects
+
+[MWC Compiler](https://github.com/meteorwebcomponents/compiler) - Compiler for polymer/webcomponents in meteor.
+
+[MWC Layout](https://github.com/meteorwebcomponents/layout) - polymer layout renderer
+
 
 ## Demo
 
