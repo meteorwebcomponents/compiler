@@ -71,7 +71,7 @@ Keep all `bower_components`, `custom polymer elements`, etc in the `root` (here 
 
 ##Related Projects
 
-[MWC Mixin](https://github.com/meteorwebcomponents/compiler) - Mixin for polymer/webcomponents in meteor.
+[MWC Mixin](https://github.com/meteorwebcomponents/mixin) - Mixin for polymer/webcomponents in meteor.
 
 [MWC Layout](https://github.com/meteorwebcomponents/layout) - polymer layout renderer
 
