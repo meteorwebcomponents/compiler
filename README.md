@@ -1,5 +1,5 @@
 <!--
-  Title: Meteor Webcomponents Compiler
+  Title: Meteor Webcomponents Compiler for Meteor Polymer integration
   Description: Compiler for polymer/webcomponents in meteor.
   -->
 # Compiler
