@@ -1,5 +1,5 @@
 <!--
-  Title: Meteor Webcomponents Compiler
+  Title: Meteor Webcomponents Compiler for Meteor Polymer integration
   Description: Compiler for polymer/webcomponents in meteor.
   -->
 # Compiler
@@ -83,4 +83,6 @@ Keep all `bower_components`, `custom polymer elements`, etc in the `root` (here 
 
 <img width="1280" alt="screen shot 2016-02-12 at 2 16 47 pm" src="https://cloud.githubusercontent.com/assets/1298779/13002443/8ec7255a-d194-11e5-8297-096ff642e00d.png">
 
+<p align="center">
 <img width="363" alt="screen shot 2016-02-12 at 2 22 25 pm" src="https://cloud.githubusercontent.com/assets/1298779/13002446/94f7701a-d194-11e5-9864-42100dd614d7.png">
+</p>
