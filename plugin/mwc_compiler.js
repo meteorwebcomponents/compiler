@@ -32,6 +32,7 @@ function MWC_Compiler() {
   this.mwcFile = "mwc_compiler.html";
   this.watcherFolder = null;
   this.publicFolder = path.resolve("./public");
+this.extensions = {};
 }
 
 MWC_Compiler.prototype.processFilesForTarget = function(files) {
@@ -66,13 +67,15 @@ MWC_Compiler.prototype.processFilesForTarget = function(files) {
             } else {
               watcherFolder = mwcRootPath;
             }
-
+if(json.hasOwnProperty("extensions")){
+            _this.extensions = json.extensions;
+            }
             if (json.hasOwnProperty("append")) {
               json.append.forEach(function(item) {
                 var itemPath = path.resolve(mwcRootPath, item);
 
                 if (fs.existsSync(itemPath)) {
-                  vulcanizer(mwcRootPath, item, file);
+                  vulcanizer(mwcRootPath, item, file, _this.extensions);
 
                   if (restartOnEdit.indexOf(itemPath) == -1) {
                     restartOnEdit.push(itemPath);
@@ -115,7 +118,7 @@ MWC_Compiler.prototype.processFilesForTarget = function(files) {
 
                 if (!fs.existsSync(mwcPath) || !fs.existsSync(mwcPathPublic) || fs.readFileSync(mwcPath).toString("utf-8") != data) {
                   fs.writeFileSync(mwcPath, data);
-                  vulcanizer(mwcRootPath, _this.mwcFile, mwcPathPublic);
+                  vulcanizer(mwcRootPath, _this.mwcFile, mwcPathPublic, _this.extensions);
                 }
 
                 file.addHtml({
@@ -124,6 +127,7 @@ MWC_Compiler.prototype.processFilesForTarget = function(files) {
                 });
               }
             }
+            
           } else {
             file.error({
               message: "can't find root, " + mwcRootPath
@@ -161,7 +165,7 @@ MWC_Compiler.prototype.processFilesForTarget = function(files) {
             fs.appendFileSync(mwcPathPublic, " ");
           } else {
             if (fs.existsSync(path.resolve(_this.watcherFolder, _this.mwcFile))) {
-              vulcanizer(_this.watcherFolder, _this.mwcFile, mwcPathPublic);
+              vulcanizer(_this.watcherFolder, _this.mwcFile, mwcPathPublic, _this.extensions);
             } else {
               fs.appendFileSync(mwcPathPublic, " ");
             }
@@ -172,7 +176,7 @@ MWC_Compiler.prototype.processFilesForTarget = function(files) {
   }
 };
 
-function vulcanizer(root, target, destination) {
+function vulcanizer(root, target, destination, extensions) {
   // var wait = new future();
 
   vulcanize.setOptions({
@@ -189,7 +193,7 @@ function vulcanizer(root, target, destination) {
       if (error) {
         console.log(error);
       } else {
-        var extended = MWC_extend(html);
+        var extended = MWC_extend(html,extensions);
         fs.writeFileSync(destination, extended);
       }
     } else {
@@ -198,7 +202,7 @@ function vulcanizer(root, target, destination) {
           message: error.message
         });
       } else {
-        var extended = MWC_extend(html);
+        var extended = MWC_extend(html,extensions);
         append(destination,extended);
       }
     }
@@ -208,9 +212,9 @@ function vulcanizer(root, target, destination) {
 
   // return wait.wait();
 }
-function MWC_extend(html){
+function MWC_extend(html,extensions){
   if(typeof(MWCExtend) != undefined){
-    return MWCExtend(html)
+    return MWCExtend(html,extensions);
   }
   return html;
 }
