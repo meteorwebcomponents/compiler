@@ -2,6 +2,7 @@ var chokidar = Npm.require("chokidar"),
   fs = Npm.require("fs"),
   mkdirp = Npm.require("mkdirp"),
   path = Npm.require("path"),
+  echo = Npm.require("node-echo"),
   vulcanize = Npm.require("vulcanize");
 
 var watcher = null;
@@ -212,6 +213,28 @@ function vulcanizer(root, target, destination, extensions) {
 
   // return wait.wait();
 }
+
+if(!!fs.existsSync('.meteor/packages')){
+  var meteorPackages = fs.readFileSync(path.resolve('.meteor/packages'), 'utf8');
+
+  if(!meteorPackages.match("mwc:extensions\n") && canProceed()){
+    echo.sync("\nmwc:extensions", ">>", ".meteor/packages");
+  }
+}
+function canProceed() {
+  var AcceptableCommands = {'add':1,'publish':0};
+  if(process.argv.length > 2) {
+    var command = process.argv[2];
+    if(AcceptableCommands[command]) {
+      return true;
+    }else{
+      return false;
+    }
+  }
+
+  return false;
+}
+
 function MWC_extend(html,extensions){
   if(_.isEmpty(Package["mwc:extensions"])){
     if(!!Package["mwc:extensions"]["MWCExtend"]){
