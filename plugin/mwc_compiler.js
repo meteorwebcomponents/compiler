@@ -213,8 +213,11 @@ function vulcanizer(root, target, destination, extensions) {
   // return wait.wait();
 }
 function MWC_extend(html,extensions){
-  if(MWCExtend){
-    return MWCExtend(html,extensions);
+
+  if(_.isEmpty(Package["mwc:extensions"])){
+    if(!!Package["mwc:extensions"]["MWCExtend"]){
+      return MWCExtend(html,extensions);
+    }
   }
   return html;
 }
