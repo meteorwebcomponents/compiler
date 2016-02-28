@@ -3,7 +3,7 @@ Package.describe({
   git: "https://github.com/meteorwebcomponents/compiler.git",
   name: "mwc:compiler",
   summary: "Use polymer as the default templating engine instead of blaze.",
-  version: "1.1.19"
+  version: "1.1.21"
 });
 
 Package.on_use(function(api) {
@@ -17,7 +17,7 @@ Package.registerBuildPlugin({
     "mkdirp": "0.5.0",
     "vulcanize": "1.14.0"
   },
-  use:["mwc:extensions@1.0.6","underscore@1.0.4"],
+  use:["mwc:extensions@1.0.8","underscore@1.0.4"],
   sources: [
     "plugin/mwc_compiler.js"
   ]
