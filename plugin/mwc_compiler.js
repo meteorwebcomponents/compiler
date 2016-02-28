@@ -32,7 +32,7 @@ function MWC_Compiler() {
   this.mwcFile = "mwc_compiler.html";
   this.watcherFolder = null;
   this.publicFolder = path.resolve("./public");
-this.extensions = {};
+  this.extensions = {};
 }
 
 MWC_Compiler.prototype.processFilesForTarget = function(files) {
@@ -67,8 +67,8 @@ MWC_Compiler.prototype.processFilesForTarget = function(files) {
             } else {
               watcherFolder = mwcRootPath;
             }
-if(json.hasOwnProperty("extensions")){
-            _this.extensions = json.extensions;
+            if(json.hasOwnProperty("extensions")){
+              _this.extensions = json.extensions;
             }
             if (json.hasOwnProperty("append")) {
               json.append.forEach(function(item) {
@@ -127,7 +127,7 @@ if(json.hasOwnProperty("extensions")){
                 });
               }
             }
-            
+
           } else {
             file.error({
               message: "can't find root, " + mwcRootPath
@@ -213,7 +213,7 @@ function vulcanizer(root, target, destination, extensions) {
   // return wait.wait();
 }
 function MWC_extend(html,extensions){
-  if(typeof(MWCExtend) != undefined){
+  if(MWCExtend){
     return MWCExtend(html,extensions);
   }
   return html;
