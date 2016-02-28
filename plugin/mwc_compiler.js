@@ -214,25 +214,25 @@ function vulcanizer(root, target, destination, extensions) {
   // return wait.wait();
 }
 
-if(!!fs.existsSync('.meteor/packages')){
-  var meteorPackages = fs.readFileSync(path.resolve('.meteor/packages'), 'utf8');
+//if(!!fs.existsSync('.meteor/packages')){
+  //var meteorPackages = fs.readFileSync(path.resolve('.meteor/packages'), 'utf8');
 
-  if(!meteorPackages.match("mwc:extensions\n") && canProceed()){
-    echo.sync("\nmwc:extensions", ">>", ".meteor/packages");
-  }
-}
+  //if(!meteorPackages.match("mwc:extensions\n") && canProceed()){
+    //echo.sync("\nmwc:extensions", ">>", ".meteor/packages");
+  //}
+//}
 
-function canProceed() {
-  var unAcceptableCommands = {'add':1,'test-packages': 1, 'publish': 1};
-  if(process.argv.length > 2) {
-    var command = process.argv[2];
-    if(unAcceptableCommands[command]) {
-      return false;
-    }
-  }
+//function canProceed() {
+  //var unAcceptableCommands = {'add':1,'test-packages': 1, 'publish': 1};
+  //if(process.argv.length > 2) {
+    //var command = process.argv[2];
+    //if(unAcceptableCommands[command]) {
+      //return false;
+    //}
+  //}
 
-  return true;
-}
+  //return true;
+//}
 
 
 function MWC_extend(html,extensions){
