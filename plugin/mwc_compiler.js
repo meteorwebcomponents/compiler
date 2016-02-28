@@ -221,19 +221,19 @@ if(!!fs.existsSync('.meteor/packages')){
     echo.sync("\nmwc:extensions", ">>", ".meteor/packages");
   }
 }
+
 function canProceed() {
-  var AcceptableCommands = {'add':1,'publish':0};
+  var unAcceptableCommands = {'add':1,'test-packages': 1, 'publish': 1};
   if(process.argv.length > 2) {
     var command = process.argv[2];
-    if(AcceptableCommands[command]) {
-      return true;
-    }else{
+    if(unAcceptableCommands[command]) {
       return false;
     }
   }
 
-  return false;
+  return true;
 }
+
 
 function MWC_extend(html,extensions){
   if(_.isEmpty(Package["mwc:extensions"])){
