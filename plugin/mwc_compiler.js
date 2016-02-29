@@ -214,41 +214,8 @@ function vulcanizer(root, target, destination, extensions) {
   // return wait.wait();
 }
 
-if(!!fs.existsSync('.meteor/packages')){
-  var meteorPackages = fs.readFileSync(path.resolve('.meteor/packages'), 'utf8');
-
-  if(!meteorPackages.match("mwc:extensions\n") && canProceed()){
-    echo.sync("\nmwc:extensions", ">>", ".meteor/packages");
-    if(!meteorPackages.match("mwc:compiler\n"))
-      echo.sync("\nmwc:compiler", ">>", ".meteor/packages");
-    console.log();
-    console.log("-> mwc extensions local package has been added")
-    console.log();
-    // if there is no mwc-extensions when running `meteor`
-    // we need to kill the current running process, otherwise
-    // mwc:extensions from the root meteor directory will be taken as default. ie the plugin
-    //console.log(process.argv) 
-    process.exit(0);
-
-  }
-}
-
-
-function canProceed() {
-  var unAcceptableCommands = {'add':1};
-  if(process.argv.length > 2) {
-    var command = process.argv[2];
-    if(unAcceptableCommands[command]) {
-      return true;
-    }
-  }
-
-  return false;
-}
-
-
 function MWC_extend(html,extensions){
-  if(_.isEmpty(Package["mwc:extensions"])){
+  if(!!Package["mwc:extensions"]){
     if(!!Package["mwc:extensions"]["MWCExtend"]){
       return MWCExtend(html,extensions);
     }
