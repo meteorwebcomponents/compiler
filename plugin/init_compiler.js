@@ -90,7 +90,7 @@ function _packageJsContent () {
   function deps(api) {
 
 
-    var d = ["underscore","mwc:compiler@1.1.43","mwc:extensions@1.0.22"];
+    var d = ["underscore","mwc:compiler","mwc:extensions"];
     var mwcFilePath = path.resolve('client/compiler.mwc.json');
     if (mwcFilePath) {
       var mwcFile = JSON.parse(fs.readFileSync(mwcFilePath, 'utf8'));
