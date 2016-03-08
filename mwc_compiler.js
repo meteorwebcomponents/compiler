@@ -28,7 +28,19 @@ function append(file, html) {
   }
 }
 
-function MWC_Compiler() {
+function canProceed() {
+  var unAcceptableCommands = {'add':1,'test-packages': 1, 'publish': 1};
+  if(process.argv.length > 2) {
+    var command = process.argv[2];
+    if(unAcceptableCommands[command]) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+MWC_Compiler = function() {
   this.compilerFileName = "compiler.mwc.json";
   this.mwcFile = "mwc_compiler.html";
   this.watcherFolder = null;
@@ -70,7 +82,10 @@ MWC_Compiler.prototype.processFilesForTarget = function(files) {
             }
             if(json.hasOwnProperty("extensions")){
               _this.extensions = json.extensions;
+
+
             }
+
             if (json.hasOwnProperty("append")) {
               json.append.forEach(function(item) {
                 var itemPath = path.resolve(mwcRootPath, item);
@@ -146,38 +161,52 @@ MWC_Compiler.prototype.processFilesForTarget = function(files) {
       _this.watcherFolder = watcherFolder;
 
       if (watcher) {
+console.log(watcher);
         watcher.close();
       }
 
-      watcher = chokidar.watch(_this.watcherFolder, {
-        // ignored: /[\/\\]\./,
-        ignoreInitial: true
-      });
+     //if(process.env.MWC_WATCHING == undefined){
+        //process.env.MWC_WATCHING = "true";
+        watcher = chokidar.watch(_this.watcherFolder, {
+          // ignored: /[\/\\]\./,
+          ignoreInitial: true
+        });
 
-      watcher.on("all", function(event, A) {
-        if (_this.mwcFile != path.basename(A)) {
-          if (!fs.existsSync(_this.publicFolder)) {
-            mkdirp.sync(_this.publicFolder);
-          }
+        watcher.on("all", function(event,A, stats) {
+//console.log(this);
+          var d = new Date();
+          var prevRun = process.env.MWC_LAST_RUN || 0;
+          if( (d.valueOf()-prevRun) > 300 ){
+            if (_this.mwcFile != path.basename(A)) {
+              if (!fs.existsSync(_this.publicFolder)) {
+                mkdirp.sync(_this.publicFolder);
+              }
 
-          var mwcPathPublic = path.resolve(_this.publicFolder, _this.mwcFile);
+              var mwcPathPublic = path.resolve(_this.publicFolder, _this.mwcFile);
 
-          if (-1 < restartOnEdit.indexOf(A)) {
-            fs.appendFileSync(mwcPathPublic, " ");
-          } else {
-            if (fs.existsSync(path.resolve(_this.watcherFolder, _this.mwcFile))) {
-              vulcanizer(_this.watcherFolder, _this.mwcFile, mwcPathPublic, _this.extensions);
-            } else {
-              fs.appendFileSync(mwcPathPublic, " ");
+              if (-1 < restartOnEdit.indexOf(A)) {
+                fs.appendFileSync(mwcPathPublic, " ");
+              } else {
+                if (fs.existsSync(path.resolve(_this.watcherFolder, _this.mwcFile))) {
+                  setTimeout(function(){
+                    vulcanizer(_this.watcherFolder, _this.mwcFile, mwcPathPublic, _this.extensions);
+                  },300)
+                } else {
+                  fs.appendFileSync(mwcPathPublic, " ");
+                }
+              }
+
             }
           }
-        }
-      });
+
+            process.env.MWC_LAST_RUN = d.valueOf();
+        });
+      //}
     }
   }
 };
 
-function vulcanizer(root, target, destination, extensions) {
+vulcanizer = function(root, target, destination, extensions) {
   // var wait = new future();
 
   vulcanize.setOptions({
@@ -195,7 +224,7 @@ function vulcanizer(root, target, destination, extensions) {
         console.log(error);
       } else {
         var extended = MWC_extend(html,extensions);
-        fs.writeFileSync(destination, extended);
+        fs.writeFile(destination, extended);
       }
     } else {
       if (error) {
@@ -217,7 +246,7 @@ function vulcanizer(root, target, destination, extensions) {
 function MWC_extend(html,extensions){
   if(!!Package["mwc:extensions"]){
     if(!!Package["mwc:extensions"]["MWCExtend"]){
-      return MWCExtend(html,extensions);
+      return Package["mwc:extensions"]["MWCExtend"](html,extensions);
     }
   }else{
 
@@ -225,11 +254,4 @@ function MWC_extend(html,extensions){
   return html;
 }
 
-Plugin.registerCompiler({
-  extensions: ["mwc.json"],
-  filenames: []
-}, function() {
-  var compiler = new MWC_Compiler();
 
-  return compiler;
-});
