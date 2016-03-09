@@ -36,7 +36,7 @@ Install `mwc:compiler` package to your Meteor App
 Keep the `compiler.mwc.json` named configuration file with the following properties under `/client` folder of your Meteor App.
 
 
-* `root`[String] : Root directory from which `html`,`js`,`css`,etc files to be compiled and vulcanized.
+* `root`[String] : Root directory from which `html`,`js`,`css`,etc files to be compiled and vulcanized. Root directory should be a .(dot) folder to avoid meteor watching the files. Compiler has a dedicated watcher to do that. eg .polymer. 
 * `append` [Array] : Files specified here will be appended to `web.bowser`, `web.cordova` builds after vulcanizing.
 * `import` [Array] : Files to be vulcanised to `public/mwc_compiler.html` & imported to `<head>`.
 
@@ -61,11 +61,16 @@ Here is a sample `compiler.mwc.json`:
         "bower_components/polymer/polymer.html",
 
         "linto/card-route.html"
-    ]     
+    ], 
+    "extensions": {
+        "mwc:ecmascript@1.0.8": {
+            "compileFunction": "MWCEcmascript"
+        }
+    }
 }
 
 ```
-
+Refer https://github.com/meteorwebcomponents/extensions for more details on extensions.
 
 Keep all `bower_components`, `custom polymer elements`, etc in the `root` (here it will be `.polymer`) vulcanizer root directory.
 
