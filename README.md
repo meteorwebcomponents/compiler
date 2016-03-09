@@ -61,11 +61,16 @@ Here is a sample `compiler.mwc.json`:
         "bower_components/polymer/polymer.html",
 
         "linto/card-route.html"
-    ]     
+    ], 
+    "extensions": {
+        "mwc:ecmascript@1.0.6": {
+            "compileFunction": "MWCEcmascript"
+        }
+    }
 }
 
 ```
-
+Refer https://github.com/meteorwebcomponents/extensions for more details on extensions.
 
 Keep all `bower_components`, `custom polymer elements`, etc in the `root` (here it will be `.polymer`) vulcanizer root directory.
 
