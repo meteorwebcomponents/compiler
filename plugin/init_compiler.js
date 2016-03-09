@@ -38,7 +38,6 @@ function canProceed() {
   var unAcceptableCommands = {'test-packages': 1, 'publish': 1};
   if(process.argv.length > 2) {
     var command = process.argv[2];
-    console.log(command);
     if(unAcceptableCommands[command]) {
       return false;
     }

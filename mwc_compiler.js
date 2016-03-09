@@ -161,7 +161,6 @@ MWC_Compiler.prototype.processFilesForTarget = function(files) {
       _this.watcherFolder = watcherFolder;
 
       if (watcher) {
-console.log(watcher);
         watcher.close();
       }
 
