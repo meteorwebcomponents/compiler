@@ -8,7 +8,7 @@ var extDir = path.resolve('./packages/mwc-compiler');
 var packageJsPath = path.resolve(extDir, 'package.js');
 var indexJsPath = path.resolve(extDir, 'compiler.js');
 var verPath = path.resolve(extDir,'ver');
-var ver = "1.0.3";
+var ver = "1.0.4";
 if(canProceed() && fs.existsSync(extDir)) {
   var prevVer = fs.existsSync(verPath) ? fs.readFileSync(verPath, 'utf8') : "";
   if(prevVer !== ver){
@@ -92,7 +92,7 @@ function _packageJsContent () {
     git: "https://github.com/meteorwebcomponents/compiler.git",
     name: "mwc-compiler",
     summary: "Use polymer as the default templating engine instead of blaze.",
-    version: "1.0.3"
+    version: "1.0.4"
   });
 
   function deps(api) {
@@ -101,7 +101,12 @@ function _packageJsContent () {
     var d = ["underscore", "mwc:compiler", "mwc:extensions"];
     var mwcFilePath = path.resolve('client/compiler.mwc.json');
     if (fs.existsSync(mwcFilePath)) {
-      var mwcFile = JSON.parse(fs.readFileSync(mwcFilePath, 'utf8'));
+      try{
+        var mwcFile = JSON.parse(fs.readFileSync(mwcFilePath, 'utf8'));
+      }
+      catch(err){
+        return d;
+      }
       if (mwcFile.hasOwnProperty("extensions")) {
         var extensions = _.keys(_.omit(mwcFile.extensions, ["log", "logFile"]));
         extensions.forEach(function(ext) {
@@ -131,4 +136,5 @@ function _packageJsContent () {
       "chokidar": "1.2.0"
     }
   });
+
 }
