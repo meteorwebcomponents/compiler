@@ -63,7 +63,7 @@ Here is a sample `compiler.mwc.json`:
         "linto/card-route.html"
     ], 
     "extensions": {
-        "mwc:ecmascript@1.0.6": {
+        "mwc:ecmascript@1.0.8": {
             "compileFunction": "MWCEcmascript"
         }
     }
