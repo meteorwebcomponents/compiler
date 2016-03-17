@@ -91,7 +91,7 @@ MWC_Compiler.prototype.processFilesForTarget = function(files) {
                 var itemPath = path.resolve(mwcRootPath, item);
 
                 if (fs.existsSync(itemPath)) {
-                  vulcanizer(mwcRootPath, item, file, _this.extensions);
+                  vulcanizer(itemPath, file, _this.extensions);
 
                   if (restartOnEdit.indexOf(itemPath) == -1) {
                     restartOnEdit.push(itemPath);
@@ -134,7 +134,7 @@ MWC_Compiler.prototype.processFilesForTarget = function(files) {
 
                 if (!fs.existsSync(mwcPath) || !fs.existsSync(mwcPathPublic) || fs.readFileSync(mwcPath).toString("utf-8") != data) {
                   fs.writeFileSync(mwcPath, data);
-                  vulcanizer(mwcRootPath, _this.mwcFile, mwcPathPublic, _this.extensions);
+                  vulcanizer(mwcPath, mwcPathPublic, _this.extensions);
                 }
 
                 file.addHtml({
@@ -164,52 +164,52 @@ MWC_Compiler.prototype.processFilesForTarget = function(files) {
         watcher.close();
       }
 
-     //if(process.env.MWC_WATCHING == undefined){
-        //process.env.MWC_WATCHING = "true";
-        watcher = chokidar.watch(_this.watcherFolder, {
-          // ignored: /[\/\\]\./,
-          ignoreInitial: true
-        });
+      //if(process.env.MWC_WATCHING == undefined){
+      //process.env.MWC_WATCHING = "true";
+      watcher = chokidar.watch(_this.watcherFolder, {
+        // ignored: /[\/\\]\./,
+        ignoreInitial: true
+      });
 
-        watcher.on("all", function(event,A, stats) {
-//console.log(this);
-          var d = new Date();
-          var prevRun = process.env.MWC_LAST_RUN || 0;
-          if( (d.valueOf()-prevRun) > 300 ){
-            if (_this.mwcFile != path.basename(A)) {
-              if (!fs.existsSync(_this.publicFolder)) {
-                mkdirp.sync(_this.publicFolder);
-              }
-
-              var mwcPathPublic = path.resolve(_this.publicFolder, _this.mwcFile);
-
-              if (-1 < restartOnEdit.indexOf(A)) {
-                fs.appendFileSync(mwcPathPublic, " ");
-              } else {
-                if (fs.existsSync(path.resolve(_this.watcherFolder, _this.mwcFile))) {
-                  setTimeout(function(){
-                    vulcanizer(_this.watcherFolder, _this.mwcFile, mwcPathPublic, _this.extensions);
-                  },300)
-                } else {
-                  fs.appendFileSync(mwcPathPublic, " ");
-                }
-              }
-
+      watcher.on("all", function(event,A, stats) {
+        //console.log(this);
+        var d = new Date();
+        var prevRun = process.env.MWC_LAST_RUN || 0;
+        if( (d.valueOf()-prevRun) > 300 ){
+          if (_this.mwcFile != path.basename(A)) {
+            if (!fs.existsSync(_this.publicFolder)) {
+              mkdirp.sync(_this.publicFolder);
             }
-          }
 
-            process.env.MWC_LAST_RUN = d.valueOf();
-        });
+            var mwcPathPublic = path.resolve(_this.publicFolder, _this.mwcFile);
+
+            if (-1 < restartOnEdit.indexOf(A)) {
+              fs.appendFileSync(mwcPathPublic, " ");
+            } else {
+              var mwcPath = path.resolve(_this.watcherFolder, _this.mwcFile);
+              if (fs.existsSync(mwcPath)) {
+                setTimeout(function(){
+                  vulcanizer(mwcPath, mwcPathPublic, _this.extensions);
+                },300)
+              } else {
+                fs.appendFileSync(mwcPathPublic, " ");
+              }
+            }
+
+          }
+        }
+
+        process.env.MWC_LAST_RUN = d.valueOf();
+      });
       //}
     }
   }
 };
 
-vulcanizer = function(root, target, destination, extensions) {
+vulcanizer = function(target, destination, extensions) {
   // var wait = new future();
 
   vulcanize.setOptions({
-    abspath: root,
     implicitStrip: true,
     inlineCss: true,
     inlineScripts: true,
