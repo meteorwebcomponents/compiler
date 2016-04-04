@@ -2,6 +2,9 @@
   Title: Meteor Webcomponents Compiler for Meteor Polymer integration
   Description: Compiler for polymer/webcomponents in meteor.
   -->
+> This project is depricated
+> #For meteor 1.3+ we have [Synthesis](https://github.com/meteorwebcomponents/synthesis)
+
 # Compiler
 
 ## What is mwc (meteor-webcomponents) compiler ?
